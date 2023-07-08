@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Snake :D</title>
+    <link rel="stylesheet" href="styles.css" />
+    <script src="script.js" defer></script>
+  </head>
+  <body>
+    <div class="board" id="board"></div>
+    <div class="start-input" id="startInput">
+      <div class="snake-title">SNAKE GAME</div>
+      <div class="board-height">
+        <label>Board Height</label>
+        <input type="number" id="height-input" value="20" />
+      </div>
+      <div class="board-width">
+        <label>Board Width</label>
+        <input type="number" id="width-input" value="20" />
+      </div>
+      <button id="start-button">Start</button>
+    </div>
+    <div id="timer">:D</div>
+    <div class="result-screen" id="resultScreen">
+      <div id="result-message">MESSAGE</div>
+      <button
+        class="restart-button restart-button-shadow-drop restart-button-shadow-drop--black"
+        id="restart-button"
+      >
+        RESTART
+      </button>
+    </div>
+  </body>
+</html>
