@@ -9,17 +9,55 @@
   </head>
   <body>
     <div class="board" id="board"></div>
+    <div class="board-features" id="board-features">
+      <div class="score-board">
+        <div id="score-text">SCORE:</div>
+        <div id="score-counter"></div>
+      </div>
+      <div class="eaten-blocks-score-board">
+        <div id="blocks-text">BLOCKS:</div>
+        <div id="eaten-counter"></div>
+      </div>
+      <div id="esc-text">TBA: Press ESC at any time to pause game!</div>
+    </div>
+
     <div class="start-input" id="startInput">
       <div class="snake-title">SNAKE GAME</div>
-      <div class="board-height">
-        <label>Board Height</label>
-        <input type="number" id="height-input" value="20" />
+      <div class="inputs">
+        <div class="board-height">
+          <label id="height-input-text">Board Height</label>
+          <input type="number" id="height-input" value="20" />
+        </div>
+        <div class="board-width">
+          <label id="width-input-text">Board Width</label>
+          <input type="number" id="width-input" value="20" />
+        </div>
+        <div class="speed-options">
+          <div id="speed-prompt">Speed:</div>
+          <div class="speed-radio">
+            <input type="radio" name="speed-type" id="slow" value="slow" />Slow
+            <input
+              type="radio"
+              name="speed-type"
+              checked="checked"
+              id="normal"
+              value="normal"
+            />Normal
+            <input type="radio" name="speed-type" id="fast" value="fast" />Fast
+            <!-- <input type="radio" name="speed-type" id="custom" />Custom -->
+          </div>
+          <div>
+            <input type="checkbox" name="speed-up" id="speed-up-box" />Speed Up
+            Over Time
+          </div>
+        </div>
       </div>
-      <div class="board-width">
-        <label>Board Width</label>
-        <input type="number" id="width-input" value="20" />
-      </div>
-      <button id="start-button">Start</button>
+      <button
+        class="start-button start-button-flash start-button-flash--black"
+        id="start-button"
+      >
+        START
+      </button>
     </div>
     <div id="timer">:D</div>
     <div class="result-screen" id="resultScreen">
@@ -30,6 +68,7 @@
       >
         RESTART
       </button>
+      <button id="change-settings-button">Change Game Settings</button>
     </div>
   </body>
 </html>

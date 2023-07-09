@@ -14,6 +14,7 @@ body {
   justify-content: center;
   align-items: center;
   flex-flow: column wrap;
+  background-color: black;
 }
 
 .start-input.show {
@@ -22,7 +23,7 @@ body {
 
 .snake-title {
   font-size: 50px; /* make it so that it sizes according to window */
-  font-family: "Times New Roman", Times, serif;
+  font-family: Georgia, "Times New Roman", Times, serif;
   font-weight: bolder;
   text-shadow: 0 1px #818181, 0 2px #818181, 0 3px #818181, 0 4px #818181;
   animation: rainbow 5s infinite;
@@ -70,6 +71,50 @@ body {
   }
 }
 
+.inputs {
+  display: flex;
+  flex-flow: column;
+  font-size: 18px;
+  padding: 20px;
+  align-items: center;
+  justify-content: center;
+  font-family: Verdana, Geneva, Tahoma, sans-serif;
+}
+
+.board-height {
+  padding-bottom: 5px;
+}
+
+#height-input-text,
+#width-input-text {
+  width: auto;
+  padding-right: 5px;
+}
+
+#height-input,
+#width-input {
+  width: 80px;
+  padding: 5px;
+  border-radius: 5px;
+  border: 1px solid grey;
+  background: transparent;
+  color: white;
+  text-align: center;
+  font-size: 15px;
+  font-family: Verdana, Geneva, Tahoma, sans-serif;
+}
+
+input::-webkit-outer-spin-button,
+input::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+input[type="number"] {
+  -moz-appearance: textfield;
+  appearance: textfield;
+}
+
 label {
   display: inline-block;
   width: 100px;
@@ -77,33 +122,83 @@ label {
   color: white;
 }
 
-#start-button {
-  width: fit-content;
-  padding-top: 5px;
-  padding-bottom: 5px;
-  padding-left: 20px;
-  padding-right: 20px;
-  border-radius: 8px;
-  margin-top: 15px;
-  font-size: 20px;
-  font-weight: bold;
+.speed-options {
+  display: flex;
+  flex-direction: column;
+  color: white;
   font-family: Georgia, "Times New Roman", Times, serif;
-  font-style: bold;
+  font-size: 15px;
+  margin-top: 20px;
+  padding: 15px;
+  padding-left: 30px;
+  padding-right: 30px;
+  border: 1px solid white;
 }
+
+#speed-prompt {
+  font-weight: bolder;
+  padding-bottom: 8px;
+}
+
+.start-button {
+  font-family: Impact, Haettenschweiler, "Arial Narrow Bold", sans-serif;
+  text-transform: uppercase;
+  font-size: 22px;
+  letter-spacing: 2px;
+  border: 1px solid grey;
+}
+
+.start-button:hover .start-button-slide-show-text1 {
+  margin-left: 65px;
+}
+.start-button-flash {
+  display: inline-block;
+  color: whitesmoke;
+  margin: 10px;
+  width: 130px;
+  height: 40px;
+  border-radius: 10px;
+  position: relative;
+  overflow: hidden;
+  text-decoration: none;
+  text-transform: uppercase;
+  text-align: center;
+}
+.start-button-flash::before {
+  content: "";
+  position: absolute;
+  top: -30px;
+  left: -80px;
+  height: 100px;
+  width: 70px;
+  background: rgba(255, 255, 255, 0.298);
+  transform: rotate(20deg);
+}
+.start-button-flash:hover::before {
+  left: 190px;
+  transition: all 0.5s ease 0s;
+}
+.start-button-flash--black {
+  background: rgb(20, 20, 20);
+}
+
+/* .result-screen.show {
+  display: flex;
+} */
 
 .board {
   position: absolute;
   width: 100vw;
   height: 100vh;
-  padding: 20px;
+  padding: 40px;
   display: grid;
   justify-content: center;
   background-color: black;
 }
 
-.board > * {
-  border: 1px solid rgb(10, 10, 10);
-}
+/* .board > * {
+  border: 1px solid transparent;
+} */
 
 .wall-block {
   background-color: rgb(90, 90, 90);
@@ -111,6 +206,42 @@ label {
 
 .board-block.snake {
   background-color: hotpink;
+}
+
+.board-features {
+  display: none;
+  width: 100vw;
+  height: 100vh;
+  color: white;
+}
+
+.board-features.show {
+  display: flex;
+}
+
+.score-board,
+.eaten-blocks-score-board {
+  position: fixed;
+  top: 2%;
+  font-family: Impact, Haettenschweiler, "Arial Narrow Bold", sans-serif;
+  font-size: 20px;
+  letter-spacing: 1px;
+}
+
+.score-board {
+  left: 2%;
+}
+
+.eaten-blocks-score-board {
+  right: 2%;
+}
+
+#esc-text {
+  position: fixed;
+  bottom: 1%;
+  right: 1%;
+  font-family: Georgia, "Times New Roman", Times, serif;
+  font-size: 10px;
 }
 
 #timer {
@@ -128,7 +259,8 @@ label {
   color: hotpink;
 }
 
-.timer.show {
+.timer.show,
+.result-screen.show {
   display: flex;
 }
 
@@ -151,15 +283,14 @@ label {
 
 #result-message {
   font-size: 45px;
+  margin: 20px;
 }
 
 .restart-button {
   font-family: Arial, Helvetica, sans-serif;
   text-transform: uppercase;
 }
-/* .restart-button:hover .restart-button-slide-show-text1 {
-  margin-left: 65px;
-} */
+
 .restart-button-shadow-drop {
   position: relative;
   margin-top: 1%;
@@ -168,10 +299,6 @@ label {
   font-size: 0.9em;
   font-weight: 700;
   letter-spacing: 1px;
-  /* text-transform: uppercase; */
-  /* transition: all 0.3s ease-in-out 0s; */
-  /* left: 0px;
-  top: 0px; */
   width: 150px;
 }
 .restart-button-shadow-drop:hover {
@@ -185,6 +312,18 @@ label {
   box-shadow: rgb(51, 51, 51) 4px 4px 0px 0px;
 }
 
+#change-settings-button {
+  margin: 13vh;
+  padding-top: 7px;
+  padding-bottom: 7px;
+  padding-left: 30px;
+  padding-right: 30px;
+  background: rgba(0, 0, 0, 0.5);
+  border: 1px solid grey;
+  border-radius: 10px;
+  color: white;
+}
+/* 
 .result-screen.show {
   display: flex;
-}
+} */

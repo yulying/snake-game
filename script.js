@@ -3,32 +3,57 @@ const BOARD_BLOCK = "board-block";
 const SNAKE = "snake";
 
 const startInputElement = document.getElementById("startInput");
+const speedUpBox = document.getElementById("speed-up-box");
 const startButton = document.getElementById("start-button");
 const board = document.getElementById("board");
+const boardFeatures = document.getElementById("board-features");
+const scoreCounter = document.getElementById("score-counter");
+const eatenCounter = document.getElementById("eaten-counter");
 const resultScreen = document.getElementById("resultScreen");
 const resultMessage = document.getElementById("result-message");
 const restartButton = document.getElementById("restart-button");
+const changeSettingsButton = document.getElementById("change-settings-button");
 
 let boardHeight;
 let boardWidth;
 let blockTotal;
 let gameGrid;
+let speedType;
+let speed;
 
 let gameTicker;
+let speedTicker;
 let snakeArray = [0];
 let boardArray = [];
 let lastBlock;
 let growBlock;
 let direction = "right";
+let score = 0;
+let eaten = 0;
 
-startInputElement.classList.add("show");
+let lose = false;
 
-startButton.addEventListener("click", function () {
+setUpStartMenu();
+
+function setUpStartMenu() {
+  startInputElement.classList.add("show");
+  boardFeatures.classList.remove("show");
+  resultScreen.classList.remove("show");
+
+  startButton.removeEventListener;
+  startButton.addEventListener("click", setBoardSettings);
+}
+
+function setBoardSettings() {
+  const timer = document.getElementById("timer");
+
   boardHeight = Number(document.getElementById("height-input").value);
   boardWidth = Number(document.getElementById("width-input").value);
+  speedType = document.querySelector('input[name="speed-type"]:checked').value;
   blockTotal = boardHeight * boardWidth + boardHeight * 2 + boardWidth * 2 + 4;
   startInputElement.classList.remove("show");
-  const timer = document.getElementById("timer");
+
+  board.innerHTML = "";
 
   for (let i = 0; i < blockTotal; i++) {
     if (
@@ -47,18 +72,15 @@ startButton.addEventListener("click", function () {
 
   resizeGrid(boardHeight + 2, boardWidth + 2);
 
-  window.addEventListener(
-    "resize",
-    function () {
-      resizeGrid(boardHeight + 2, boardWidth + 2);
-    },
-    true
-  );
-
-  // restartButton.addEventListener("click", setUpGame);
+  window.removeEventListener("resize", resizeWindow);
+  window.addEventListener("resize", resizeWindow, true);
 
   setUpGame();
-});
+}
+
+function resizeWindow() {
+  resizeGrid(boardHeight + 2, boardWidth + 2);
+}
 
 function setUpGame() {
   snakeArray = [0];
@@ -66,7 +88,11 @@ function setUpGame() {
   growBlock = undefined;
   boardArray = [];
   direction = "right";
+  score = 0;
+  eaten = 0;
+  lose = false;
 
+  boardFeatures.classList.add("show");
   resultScreen.classList.remove("show");
 
   for (let i = 0; i < gameGrid.length; i++) {
@@ -76,6 +102,8 @@ function setUpGame() {
 
   colorSnake();
   boardArray.splice(0, 1);
+  scoreCounter.innerText = score;
+  eatenCounter.innerText = eaten;
 
   setTimeout(function () {
     timer.innerText = "3";
@@ -100,7 +128,25 @@ function setUpGame() {
 
   setTimeout(function () {
     timer.style.display = "none";
-    gameTicker = setInterval(moveBlock, 500);
+
+    switch (speedType) {
+      case "slow":
+        speed = 150;
+        break;
+      case "normal":
+        speed = 100;
+        break;
+      case "fast":
+        speed = 50;
+        break;
+    }
+
+    // if (document.getElementById("speed-up-box").checked) {
+    //   speedTicker = setInterval()
+    // }
+
+    gameTicker = setInterval(moveBlock, speed);
+    document.removeEventListener("keydown", setDirection);
     document.addEventListener("keydown", setDirection);
   }, 5000);
 
@@ -122,29 +168,41 @@ function createBlock(classId) {
 function resizeGrid(gridHeight, gridWidth) {
   if (board.offsetWidth * gridHeight < board.offsetHeight * gridWidth) {
     board.style.gridTemplateRows = `repeat(${gridHeight}, ${
-      (board.offsetWidth - 40) / gridWidth
+      (board.offsetWidth - 80) / gridWidth
     }px)`;
     board.style.gridTemplateColumns = `repeat(${gridWidth}, ${
-      (board.offsetWidth - 40) / gridWidth
+      (board.offsetWidth - 80) / gridWidth
     }px)`;
   } else {
     board.style.gridTemplateRows = `repeat(${gridHeight}, ${
-      (board.offsetHeight - 40) / gridHeight
+      (board.offsetHeight - 80) / gridHeight
     }px)`;
     board.style.gridTemplateColumns = `repeat(${gridWidth}, ${
-      (board.offsetHeight - 40) / gridHeight
+      (board.offsetHeight - 80) / gridHeight
     }px)`;
   }
 }
 
+function speedUp() {
+  if (speed > 150) {
+    speed -= 20;
+  } else if (speed > 50) {
+    speed -= 10;
+  } else {
+    speed -= 5;
+  }
+
+  gameTicker = setInterval(moveBlock, speed);
+}
+
 function setDirection(e) {
-  if (e.key == "ArrowUp") {
+  if (e.key == "ArrowUp" || e.key == "w") {
     direction = "up";
-  } else if (e.key == "ArrowDown") {
+  } else if (e.key == "ArrowDown" || e.key == "s") {
     direction = "down";
-  } else if (e.key == "ArrowLeft") {
+  } else if (e.key == "ArrowLeft" || e.key == "a") {
     direction = "left";
-  } else if (e.key == "ArrowRight") {
+  } else if (e.key == "ArrowRight" || e.key == "d") {
     direction = "right";
   }
 }
@@ -159,13 +217,15 @@ function moveBlock() {
         !snakeArray.includes(snakeArray[0] - boardWidth)
       ) {
         if (snakeArray[0] - boardWidth == growBlock) {
-          growSnake(growBlock);
           grow = true;
+          score += 100 / speed;
+          growSnake(growBlock);
         } else {
           snakeArray.unshift(snakeArray[0] - boardWidth);
         }
       } else {
         stopGame("lose");
+        lose = true;
       }
       break;
     case "down":
@@ -174,13 +234,15 @@ function moveBlock() {
         !snakeArray.includes(snakeArray[0] + boardWidth)
       ) {
         if (snakeArray[0] + boardWidth == growBlock) {
-          growSnake(growBlock);
           grow = true;
+          score += 100 / speed;
+          growSnake(growBlock);
         } else {
           snakeArray.unshift(snakeArray[0] + boardWidth);
         }
       } else {
         stopGame("lose");
+        lose = true;
       }
       break;
     case "left":
@@ -190,13 +252,15 @@ function moveBlock() {
         snakeArray[0] - 1 >= 0
       ) {
         if (snakeArray[0] - 1 == growBlock) {
-          growSnake(growBlock);
           grow = true;
+          score += 100 / speed;
+          growSnake(growBlock);
         } else {
           snakeArray.unshift(snakeArray[0] - 1);
         }
       } else {
         stopGame("lose");
+        lose = true;
       }
       break;
     case "right":
@@ -205,13 +269,15 @@ function moveBlock() {
         !snakeArray.includes(snakeArray[0] + 1)
       ) {
         if (snakeArray[0] + 1 == growBlock) {
-          growSnake(growBlock);
           grow = true;
+          score += 100 / speed;
+          growSnake(growBlock);
         } else {
           snakeArray.unshift(snakeArray[0] + 1);
         }
       } else {
         stopGame("lose");
+        lose = true;
       }
       break;
   }
@@ -223,24 +289,34 @@ function moveBlock() {
     boardArray.push(lastBlock);
   }
 
-  if (!(grow && boardArray.length == 0)) {
+  if (!(grow && boardArray.length == 0) && !lose) {
     colorSnake();
   }
 }
 
 function growSnake(block) {
+  eaten += 1;
+  scoreCounter.innerText = score.toFixed(2);
+  eatenCounter.innerText = eaten;
   snakeArray.unshift(block);
   boardArray.splice(boardArray.indexOf(block), 1);
+
   if (boardArray.length == 0) {
     gameGrid[snakeArray[0]].style.backgroundColor = "hotpink";
     stopGame("win");
   } else {
     createGrowBlock();
   }
+
+  if (speedUpBox.checked) {
+    if (eaten != 0 && eaten % 5 == 0 && speed > 30) {
+      clearInterval(gameTicker);
+      speedUp();
+    }
+  }
 }
 
 function createGrowBlock() {
-  console.log(boardArray);
   let randomBlock = boardArray[Math.floor(Math.random() * boardArray.length)];
 
   gameGrid[randomBlock].style.backgroundColor = "white";
@@ -259,6 +335,7 @@ function colorSnake() {
 
 function stopGame(state) {
   clearInterval(gameTicker);
+  gameTicker = undefined;
   resultScreen.classList.add("show");
 
   if (state == "win") {
@@ -269,5 +346,9 @@ function stopGame(state) {
     console.log("You lose.");
   }
 
+  restartButton.removeEventListener("click", setUpGame);
   restartButton.addEventListener("click", setUpGame);
+
+  changeSettingsButton.removeEventListener("click", setUpStartMenu);
+  changeSettingsButton.addEventListener("click", setUpStartMenu);
 }
