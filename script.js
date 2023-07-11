@@ -9,6 +9,14 @@ const board = document.getElementById("board");
 const boardFeatures = document.getElementById("board-features");
 const scoreCounter = document.getElementById("score-counter");
 const eatenCounter = document.getElementById("eaten-counter");
+
+const pauseMenu = document.getElementById("pause-menu");
+const pauseContinueButton = document.getElementById("pause-continue-button");
+const pauseRestartButton = document.getElementById("pause-restart-button");
+const pauseChangeSettingButton = document.getElementById(
+  "pause-change-settings-button"
+);
+
 const resultScreen = document.getElementById("resultScreen");
 const resultMessage = document.getElementById("result-message");
 const restartButton = document.getElementById("restart-button");
@@ -38,6 +46,7 @@ setUpStartMenu();
 function setUpStartMenu() {
   startInputElement.classList.add("show");
   boardFeatures.classList.remove("show");
+  pauseMenu.classList.remove("show");
   resultScreen.classList.remove("show");
 
   startButton.removeEventListener;
@@ -93,6 +102,7 @@ function setUpGame() {
   lose = false;
 
   boardFeatures.classList.add("show");
+  pauseMenu.classList.remove("show");
   resultScreen.classList.remove("show");
 
   for (let i = 0; i < gameGrid.length; i++) {
@@ -104,6 +114,26 @@ function setUpGame() {
   boardArray.splice(0, 1);
   scoreCounter.innerText = score;
   eatenCounter.innerText = eaten;
+
+  switch (speedType) {
+    case "slow":
+      speed = 150;
+      break;
+    case "normal":
+      speed = 100;
+      break;
+    case "fast":
+      speed = 50;
+      break;
+  }
+
+  setTimer();
+
+  createGrowBlock();
+}
+
+function setTimer() {
+  pauseMenu.classList.remove("show");
 
   setTimeout(function () {
     timer.innerText = "3";
@@ -129,28 +159,10 @@ function setUpGame() {
   setTimeout(function () {
     timer.style.display = "none";
 
-    switch (speedType) {
-      case "slow":
-        speed = 150;
-        break;
-      case "normal":
-        speed = 100;
-        break;
-      case "fast":
-        speed = 50;
-        break;
-    }
-
-    // if (document.getElementById("speed-up-box").checked) {
-    //   speedTicker = setInterval()
-    // }
-
     gameTicker = setInterval(moveBlock, speed);
-    document.removeEventListener("keydown", setDirection);
-    document.addEventListener("keydown", setDirection);
+    document.removeEventListener("keydown", setKeypress);
+    document.addEventListener("keydown", setKeypress);
   }, 5000);
-
-  createGrowBlock();
 }
 
 function createBlock(classId) {
@@ -195,7 +207,7 @@ function speedUp() {
   gameTicker = setInterval(moveBlock, speed);
 }
 
-function setDirection(e) {
+function setKeypress(e) {
   if (e.key == "ArrowUp" || e.key == "w") {
     direction = "up";
   } else if (e.key == "ArrowDown" || e.key == "s") {
@@ -204,6 +216,20 @@ function setDirection(e) {
     direction = "left";
   } else if (e.key == "ArrowRight" || e.key == "d") {
     direction = "right";
+  } else if (e.key == "Escape") {
+    clearInterval(gameTicker);
+    gameTicker = undefined;
+
+    pauseMenu.classList.add("show");
+
+    pauseContinueButton.removeEventListener("click", setTimer);
+    pauseContinueButton.addEventListener("click", setTimer);
+
+    pauseRestartButton.removeEventListener("click", setUpGame);
+    pauseRestartButton.addEventListener("click", setUpGame);
+
+    pauseChangeSettingButton.removeEventListener("click", setUpStartMenu);
+    pauseChangeSettingButton.addEventListener("click", setUpStartMenu);
   }
 }
 
