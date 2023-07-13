@@ -17,6 +17,8 @@ const pauseChangeSettingButton = document.getElementById(
   "pause-change-settings-button"
 );
 
+const speedUpMessage = document.getElementById("speed-up-notif");
+
 const resultScreen = document.getElementById("resultScreen");
 const resultMessage = document.getElementById("result-message");
 const restartButton = document.getElementById("restart-button");
@@ -204,6 +206,11 @@ function speedUp() {
     speed -= 5;
   }
 
+  speedUpMessage.classList.add("show");
+  setTimeout(function () {
+    speedUpMessage.classList.remove("show");
+  }, 2000);
+
   gameTicker = setInterval(moveBlock, speed);
 }
 
@@ -335,7 +342,7 @@ function growSnake(block) {
   }
 
   if (speedUpBox.checked) {
-    if (eaten != 0 && eaten % 5 == 0 && speed > 30) {
+    if (eaten != 0 && eaten % 10 == 0 && speed > 30) {
       clearInterval(gameTicker);
       speedUp();
     }
